@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var API_SERVER = window.location.hostname + ':9003',
+    var API_SERVER = window.location.hostname + ':9004',
         SITE_URL = 'http://lounge.ajf.me';
 
     var mode, socket, errored = false;

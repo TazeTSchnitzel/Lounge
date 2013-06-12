@@ -56,8 +56,8 @@ var server = http.createServer(function(request, response) {
         }));
     }
 });
-server.listen(9003, function() {
-    console.log((new Date()) + ' Server is listening on port 9003');
+server.listen(9004, function() {
+    console.log((new Date()) + ' Server is listening on port 9004');
 });
 
 wsServer = new WebSocketServer({
