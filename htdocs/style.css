@@ -1,0 +1,230 @@
+/* sane box model */
+* {
+  -webkit-box-sizing: border-box; /* Android ≤ 2.3, iOS ≤ 4 */
+     -moz-box-sizing: border-box; /* Firefox 1+ */
+          box-sizing: border-box; /* Chrome, IE 8+, Opera, Safari 5.1 */
+}
+
+/* make sure the background always uses full height */
+html, body {
+    min-height: 100%;
+}
+
+body {
+    background-color: rgb(143, 126, 116);
+    padding: 0;
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 11pt;
+    color: white;
+}
+
+a {
+    color: white;
+}
+a:visited {
+    color: #ccc;
+}
+
+ul {
+    margin: 5px;
+    padding-left: 15px;
+}
+
+li {
+    list-style-type: square;
+}
+
+.unloaded {
+    display: none;
+}
+
+header, article, #meta, #viewer, #playlist-holder, #chat, #chatlog, #users-online, #poll, footer {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 5px;
+}
+
+header {
+    clear: both;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+#homepage {
+    clear: both;
+    overflow: hidden;
+}
+
+#homepage-luna {
+    float: left;
+}
+
+#meta {
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+#meta h2 {
+    margin: 5px 0;
+}
+
+#viewer {
+    clear: both;
+    overflow: hidden;
+}
+
+input[type=text] {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    min-width: 190px;
+}
+
+input[type=text][disabled] {
+    background-color: rgba(127, 127, 127, 0.2);
+}
+
+#titlebox {
+    width: 300px;
+}
+
+#chatlog, #users-online {
+    overflow: auto;
+    word-wrap: break-word;
+}
+
+#chat-buttons {
+    clear: both;
+}
+
+@media screen and (min-width: 1063px) {
+    #chat {
+        clear: both;
+        margin-top: 5px;
+        width: 1043px;
+        height: 240px;
+        overflow: hidden;
+    }
+    #chatlog {
+        height: 190px;
+        width: 850px;
+        float: left;
+    }
+    #users-online {
+        height: 190px;
+        width: 170px;
+        float: right;
+    }
+}
+@media screen and (max-width: 1062px) {
+    #chat {
+        clear: both;
+        margin-top: 5px;
+        width: 788px;
+        height: 240px;
+    }
+    #chatlog {
+        height: 190px;
+        width: 600px;
+        float: left;
+    }
+    #users-online {
+        height: 190px;
+        width: 170px;
+        float: right;
+    }
+    #video-count {
+        display: inline-block;
+    }
+}
+
+#chatbox {
+    height: 20px;
+}
+
+.chat-info {
+    color: gray;
+}
+
+.chat-join {
+    color: green;
+}
+
+.chat-leave {
+    color: maroon;
+}
+
+.chat-mute, .chat-unmute, .chat-title-change, .chat-css-change, .chat-poll-results {
+    color: silver;
+}
+
+.chat-update {
+    color: orange;
+}
+
+.chat-action {
+    color: fuchsia;
+}
+
+.chat-format-greentext {
+    color: rgb(120, 153, 34);
+}
+
+.chat-format-spoiler {
+    color: black;
+    background-color: black;
+}
+
+.chat-format-spoiler::before {
+    color: red;
+    content: 'spoiler ';
+}
+
+.chat-format-spoiler:hover {
+    color: white;
+}
+
+.chat-format-nick {
+    font-weight: bold;
+}
+
+.user-op {
+    color: crimson;
+}
+
+.user-muted {
+    text-decoration: line-through;
+}
+
+#poll {
+    margin-top: 5px;
+}
+
+footer {
+    margin-top: 5px;
+}
+
+h1 {
+    color: white;
+    font-weight: normal;
+    text-shadow: 0px 0px 5px orange, 0px 0px 5px orange, 0px 0px 5px orange;
+    margin: 0;
+    float: left;
+}
+
+h1 a {
+    text-decoration: inherit;
+    color: inherit !important;
+}
+
+h1 a img {
+    border: none;
+    vertical-align: bottom;
+}
+
+header button {
+    display: block;
+    float: left;
+    margin-top: 8px;
+    margin-left: 6px;
+}

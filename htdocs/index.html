@@ -1,0 +1,68 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Lounge</title>
+<link rel=stylesheet href=/style.css>
+<link rel="shortcut icon" href=/media/logo.png>
+<link rel=icon href=/media/logo.png>
+
+<div id=site class=unloaded>
+    <header>
+        <h1><a href=/>Lounge</a></h1>
+        <button id=create-new title="Create chatroom"><img src=/media/add.png alt="Create chatroom"> Create chatroom</button>
+    </header>
+
+    <article id=homepage>
+        <p>Lounge is a website for organising gg2 games. Click "Create chatroom" to create a new chatroom.</p>
+    </article>
+
+    <footer>
+        &copy; 2013 <a href="http://ajf.me/">Andrea Faulds</a>. <a href="https://github.com/TazeTSchnitzel/Lounge">Fork Lounge on GitHub!</a><br>
+        Icons from <a href="http://adamwhitcroft.com/batch/">Batch</a>, &copy; <a href="https://twitter.com/adamwhitcroft">@adamwhitcroft</a>.<br>
+    </footer>
+</div>
+<noscript>Lounge requires JavaScript support to function. Please enable JavaScript (if you have disabled it), disable or create exceptions for any script/ad blockers or use a browser that supports JavaScript, where applicable.</noscript>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39376736-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script src="https://login.persona.org/include.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<link rel=stylesheet href=chart.css>
+<script src=chart.js></script>
+<script src=underscore-min-1.4.4.js></script>
+<script src=lounge.js></script>
+
+<!-- templates -->
+<script type="text/html" id=viewpage-template>
+    <div id=meta>
+        <h2 id=title>Loading...</h2>
+        Edit title: <input disabled type=text id=titlebox value="loading..."><br>
+        Chatroom link: <input disabled type=text value="loading..." id=view-link><br>
+        <div id=control class=unloaded>
+            You have control of the chatroom.<br>
+            Chatroom control link : <input disabled type=text value="loading..." id=control-link> (be careful who you share this with, and keep hold of it - it lets you control the chatroom)
+        </div>
+    </div>
+    <div id=viewer>
+        <div id=chat>
+            <div id=users-online></div>
+            <div id=chatlog></div>
+            <div id=chat-buttons>
+                <button disabled id=login-btn title="Log in to chat"><img src=/media/user-card.png alt="Log in to chat"> Log in to chat</button>
+                <input type=text placeholder="loading..." id=chatbox class=unloaded>
+                <button class=unloaded id=chat-btn title="Send message"><img src=/media/speech-bubble-left-2.png alt="Send message"></button> <button class=unloaded id=logout-btn title="Log out"><img src=/media/user-card.png alt="Log out"> Log out</button>
+            </div>
+        </div>
+    </div>
+    <div id=poll class=unloaded></div>
+</script>
