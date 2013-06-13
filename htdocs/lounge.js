@@ -170,6 +170,15 @@
                 });
             }
         };
+
+        if (localStorage.getItem('bgcolor') !== null) {
+            document.body.style.backgroundColor = localStorage.getItem('bgcolor');
+        }
+
+        $('color-chooser').onchange = function () {
+            document.body.style.backgroundColor = $('color-chooser').value;
+            localStorage.setItem('bgcolor', $('color-chooser').value);
+        };
     }
 
     // selectedOptions support emulation for Firefox
