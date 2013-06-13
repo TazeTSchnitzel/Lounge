@@ -890,7 +890,7 @@
                         canEdit = true;
                         DOM.teamSelector.value = player.team;
                         DOM.classSelector.value = player.className;
-                        DOM.ready.value = player.ready;
+                        DOM.ready.checked = player.ready;
                     }
                 });
 
