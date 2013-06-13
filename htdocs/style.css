@@ -39,7 +39,7 @@ li {
     display: none !important;
 }
 
-header, article, #meta, #viewer, #widgets, .widget, #chat, #chatlog, #users-online, #poll, footer, .gg2lobby-team {
+header, article, #meta, #viewer, #widgets, .widget, #chat, #chatlog, #users-online, #poll, footer, .gg2lobby-teams {
     background-color: rgba(0, 0, 0, 0.2);
     padding: 5px;
 }
@@ -233,6 +233,10 @@ header button, header input {
 .widget-remove, .gg2lobby-controls {
     display: block;
     clear: both;
+}
+
+.gg2lobby-teams {
+    overflow: hidden;
 }
 
 .gg2lobby-team {

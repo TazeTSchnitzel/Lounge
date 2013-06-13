@@ -807,17 +807,21 @@
                 appendText(DOM.readyLabel, ' Ready');
                 DOM.controls.appendChild(DOM.readyLabel);
 
+                DOM.teams = document.createElement('div');
+                DOM.teams.className = 'gg2lobby-teams';
+                DOM.container.appendChild(DOM.teams);
+
                 DOM.spectator = document.createElement('div');
                 DOM.spectator.className = 'gg2lobby-team';
-                DOM.container.appendChild(DOM.spectator);
+                DOM.teams.appendChild(DOM.spectator);
 
                 DOM.red = document.createElement('div');
                 DOM.red.className = 'gg2lobby-team gg2lobby-red';
-                DOM.container.appendChild(DOM.red);
+                DOM.teams.appendChild(DOM.red);
 
                 DOM.blue = document.createElement('div');
                 DOM.blue.className = 'gg2lobby-team gg2lobby-blue';
-                DOM.container.appendChild(DOM.blue);
+                DOM.teams.appendChild(DOM.blue);
 
                 DOM.spectatorHeading = document.createElement('h2');
                 appendText(DOM.spectatorHeading, 'Spectator');
