@@ -230,7 +230,7 @@ header button {
     overflow: hidden;
 }
 
-.widget-remove, .gg2lobby-team-selector, .gg2lobby-class-selector {
+.widget-remove, .gg2lobby-team-selector, .gg2lobby-class-selector, .gg2lobby-ready {
     display: block;
     clear: both;
 }
@@ -238,6 +238,14 @@ header button {
 .gg2lobby-team {
     width: 33%;
     float: left;
+}
+
+.gg2lobby-team ul {
+    padding-left: 0;
+}
+
+.gg2lobby-team li {
+    list-style-type: none;
 }
 
 .gg2lobby-red {

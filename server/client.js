@@ -530,6 +530,19 @@ function hookEvents (client) {
 
                 client.chatroom.gg2LobbyChangeClass(msg.id, client.chat_nick, msg.className);
             break;
+            case 'gg2lobby_set_ready':
+                // check that they are in chat
+                if (client.chat_nick === null) {
+                    client.send({
+                        type: 'error',
+                        error: 'not_in_chat'
+                    });
+                    client.conn.close();
+                    return;
+                }
+
+                client.chatroom.gg2LobbySetReady(msg.id, client.chat_nick, msg.ready);
+            break;
             default:
                 client.send({
                     type: 'error',

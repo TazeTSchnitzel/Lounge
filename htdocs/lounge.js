@@ -770,7 +770,7 @@
                 };
                 DOM.container.appendChild(DOM.classSelector);
 
-                ['runner', 'firebug', 'soldier', 'overweight', 'detonator', 'healer', 'constructor', 'infiltrator', 'rifleman', 'querly'].forEach(function (className, index) {
+                ['runner', 'firebug', 'rocketman', 'overweight', 'detonator', 'healer', 'constructor', 'infiltrator', 'rifleman', 'querly'].forEach(function (className, index) {
                     var elem;
 
                     DOM['classSelectOption'] = elem = document.createElement('option');
@@ -778,6 +778,21 @@
                     appendText(elem, (index === 9 ? 'Q' : index) + ' - ' + className[0].toUpperCase() + className.slice(1));
                     DOM.classSelector.appendChild(elem);
                 });
+
+                DOM.readyLabel = document.createElement('label');
+                DOM.readyLabel.className = 'gg2lobby-ready unloaded';
+                DOM.ready = document.createElement('input');
+                DOM.ready.type = 'checkbox';
+                DOM.ready.onchange = function () {
+                    send({
+                        type: 'gg2lobby_set_ready',
+                        id: state.widgetDOM.indexOf(DOM),
+                        ready: DOM.ready.checked
+                    });
+                };
+                DOM.readyLabel.appendChild(DOM.ready);                
+                appendText(DOM.readyLabel, ' Ready');
+                DOM.container.appendChild(DOM.readyLabel);
 
                 DOM.spectator = document.createElement('div');
                 DOM.spectator.className = 'gg2lobby-team';
@@ -831,10 +846,24 @@
                 DOM.spectatorList.innerHTML = '';
 
                 widgetState.players.forEach(function (player) {
-                    var li;
+                    var li, img, input;
 
                     li = document.createElement('li');
-                    appendText(li, player.name + ' - ' + player.className);
+
+                    if (player.team !== 'spectator') {
+                        img = document.createElement('img');
+                        img.src = '/media/classes/' + player.className + '.png';
+                        img.alt = img.title = player.className[0].toUpperCase() + player.className.slice(1);
+                        li.appendChild(img);
+                    }
+
+                    appendText(li, ' ' + player.name + ' ');
+
+                    input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.disabled = true;
+                    input.checked = player.ready;
+                    li.appendChild(input);
 
                     if (player.team === 'spectator') {
                         DOM.spectatorList.appendChild(li);
@@ -846,15 +875,20 @@
 
                     if (player.name === chatNick) {
                         canEdit = true;
+                        DOM.teamSelector.value = player.team;
+                        DOM.classSelector.value = player.className;
+                        DOM.ready.value = player.ready;
                     }
                 });
 
                 if (canEdit) {
                     DOM.teamSelector.className = 'gg2lobby-class-selector';
                     DOM.classSelector.className = 'gg2lobby-class-selector';
+                    DOM.readyLabel.className = 'gg2lobby-ready';
                 } else {
                     DOM.teamSelector.className = 'gg2lobby-class-selector unloaded';
                     DOM.classSelector.className = 'gg2lobby-class-selector unloaded';
+                    DOM.readyLabel.className = 'gg2lobby-ready unloaded';
                 }
             break;
         }

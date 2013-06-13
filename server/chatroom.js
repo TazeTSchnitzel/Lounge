@@ -95,18 +95,19 @@ _Chatroom.prototype.onJoinChat = function (client) {
                     widgetState.players.push({
                         name: client.chat_nick,
                         team: 'spectator',
-                        className: 'runner'
-                    });
-                    // update each client
-                    that.clients.forEach(function (cl) {
-                        cl.send({
-                            type: 'update_widget',
-                            id: id,
-                            widgetState: widgetState
-                        });
+                        className: 'runner',
+                        ready: false
                     });
                     saveChatrooms();
                 }
+                // update each client
+                that.clients.forEach(function (cl) {
+                    cl.send({
+                        type: 'update_widget',
+                        id: id,
+                        widgetState: widgetState
+                    });
+                });
             break;
         }
     });
@@ -452,7 +453,8 @@ _Chatroom.prototype.addWidget = function (widget, nick) {
                 state.players.push({
                     name: nick,
                     team: 'spectator',
-                    className: 'runner'
+                    className: 'runner',
+                    ready: false
                 });
             }
         break;
@@ -564,6 +566,42 @@ _Chatroom.prototype.gg2LobbyChangeClass = function (id, nick, className) {
         saveChatrooms();
     }
 };
+
+// gg2Lobby widget: sets readiness
+_Chatroom.prototype.gg2LobbySetReady = function (id, nick, ready) {
+    var state, dirty = false;
+
+    if (!this.widgets.hasOwnProperty(id)) {
+        return false;
+    }
+
+    if (this.widgets[id] !== 'gg2Lobby') {
+        return false;
+    }
+
+    state = this.widgetState[id];
+
+    state.players.forEach(function (player) {
+        if (player.name === nick) {
+            player.ready = ready;
+            dirty = true;
+        }
+    });
+
+    if (dirty) {
+        // update each client
+        this.clients.forEach(function (cl) {
+            cl.send({
+                type: 'update_widget',
+                id: id,
+                widgetState: state
+            });
+        });
+
+        saveChatrooms();
+    }
+};
+
 
 // public Chatroom constructor (new chatroom)
 function Chatroom(title) {
