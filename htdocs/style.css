@@ -230,7 +230,7 @@ header button {
     overflow: hidden;
 }
 
-.widget-remove, .gg2lobby-team-selector, .gg2lobby-class-selector, .gg2lobby-ready {
+.widget-remove, .gg2lobby-controls {
     display: block;
     clear: both;
 }

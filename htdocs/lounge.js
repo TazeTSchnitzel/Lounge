@@ -739,8 +739,12 @@
 
         switch (name) {
             case 'gg2Lobby':
+                DOM.controls = document.createElement('div');
+                DOM.controls.className = 'gg2lobby-controls unloaded';
+                DOM.container.appendChild(DOM.controls);
+
                 DOM.teamSelector = document.createElement('select');
-                DOM.teamSelector.className = 'gg2lobby-team-selector unloaded';
+                DOM.teamSelector.className = 'gg2lobby-team-selector';
                 DOM.teamSelector.onchange = function () {
                     send({
                         type: 'gg2lobby_change_team',
@@ -748,7 +752,7 @@
                         team: DOM.teamSelector.value
                     });
                 };
-                DOM.container.appendChild(DOM.teamSelector);
+                DOM.controls.appendChild(DOM.teamSelector);
 
                 ['spectator', 'red', 'blue'].forEach(function (teamName, index) {
                     var elem;
@@ -760,7 +764,7 @@
                 });
 
                 DOM.classSelector = document.createElement('select');
-                DOM.classSelector.className = 'gg2lobby-class-selector unloaded';
+                DOM.classSelector.className = 'gg2lobby-class-selector';
                 DOM.classSelector.onchange = function () {
                     send({
                         type: 'gg2lobby_change_class',
@@ -768,7 +772,7 @@
                         className: DOM.classSelector.value
                     });
                 };
-                DOM.container.appendChild(DOM.classSelector);
+                DOM.controls.appendChild(DOM.classSelector);
 
                 ['runner', 'firebug', 'rocketman', 'overweight', 'detonator', 'healer', 'constructor', 'infiltrator', 'rifleman', 'querly'].forEach(function (className, index) {
                     var elem;
@@ -780,7 +784,7 @@
                 });
 
                 DOM.readyLabel = document.createElement('label');
-                DOM.readyLabel.className = 'gg2lobby-ready unloaded';
+                DOM.readyLabel.className = 'gg2lobby-ready';
                 DOM.ready = document.createElement('input');
                 DOM.ready.type = 'checkbox';
                 DOM.ready.onchange = function () {
@@ -792,7 +796,7 @@
                 };
                 DOM.readyLabel.appendChild(DOM.ready);                
                 appendText(DOM.readyLabel, ' Ready');
-                DOM.container.appendChild(DOM.readyLabel);
+                DOM.controls.appendChild(DOM.readyLabel);
 
                 DOM.spectator = document.createElement('div');
                 DOM.spectator.className = 'gg2lobby-team';
@@ -882,13 +886,9 @@
                 });
 
                 if (canEdit) {
-                    DOM.teamSelector.className = 'gg2lobby-class-selector';
-                    DOM.classSelector.className = 'gg2lobby-class-selector';
-                    DOM.readyLabel.className = 'gg2lobby-ready';
+                    DOM.controls.className = 'gg2lobby-controls';
                 } else {
-                    DOM.teamSelector.className = 'gg2lobby-class-selector unloaded';
-                    DOM.classSelector.className = 'gg2lobby-class-selector unloaded';
-                    DOM.readyLabel.className = 'gg2lobby-ready unloaded';
+                    DOM.controls.className = 'gg2lobby-controls unloaded';
                 }
             break;
         }
