@@ -36,10 +36,10 @@ li {
 }
 
 .unloaded {
-    display: none;
+    display: none !important;
 }
 
-header, article, #meta, #viewer, #playlist-holder, #chat, #chatlog, #users-online, #poll, footer {
+header, article, #meta, #viewer, #widgets, .widget, #chat, #chatlog, #users-online, #poll, footer, .gg2lobby-team {
     background-color: rgba(0, 0, 0, 0.2);
     padding: 5px;
 }
@@ -53,10 +53,6 @@ header {
 #homepage {
     clear: both;
     overflow: hidden;
-}
-
-#homepage-luna {
-    float: left;
 }
 
 #meta {
@@ -227,4 +223,27 @@ header button {
     float: left;
     margin-top: 8px;
     margin-left: 6px;
+}
+
+.widget {
+    clear: both;
+    overflow: hidden;
+}
+
+.widget-remove, .gg2lobby-team-selector, .gg2lobby-class-selector {
+    display: block;
+    clear: both;
+}
+
+.gg2lobby-team {
+    width: 33%;
+    float: left;
+}
+
+.gg2lobby-red {
+    color: red;
+}
+
+.gg2lobby-blue {
+    color: blue;
 }

@@ -9,7 +9,10 @@
     var state = {
         users: {},
         viewers: 0,
-        title: ''
+        title: '',
+        widgets: [],
+        widgetState: [],
+        widgetDOM: []
     }, haveControl = false, pollVote = null, chatNick = null;
 
     var inFocus = true, unreadMessages = 0;
@@ -216,7 +219,7 @@
             switch (msg.type) {
                 case 'chatroom_info':
                     // replace homepage with viewing page template
-                    $('homepage').outerHTML = '<div id=viewpage>' + $('viewpage-template').innerHTML + '</div>';
+                    $('homepage').innerHTML = $('viewpage-template').innerHTML;
                 
                     chatroom = msg.chatroom;
 
@@ -257,12 +260,23 @@
                             $('title').appendChild(document.createTextNode($('titlebox').value));
                         };
 
-                        // unhide control box
-                        $('control').className = '';
+                        // unhide widgets controls box
+                        $('widgets-controls').className = '';
 
                         // display chatroom control URL
                         $('control-link').value = SITE_URL + '/' + chatroom.id + '#control=' + control;
+
+                        // make Add widget button work
+                        $('add-widget').onclick = function () {
+                            send({
+                                type: 'add_widget',
+                                widget: $('widget-choice').value
+                            });
+                        };
                     }
+
+                    // initialise widgets
+                    initWidgets(chatroom.widgets, chatroom.widgetState);
 
                     // make chat work
                     $('login-btn').disabled = false;
@@ -529,6 +543,15 @@
                         nick: nick
                     });
                 break;
+                case 'add_widget':
+                    addWidget(msg.widget, msg.widgetState);
+                break;
+                case 'update_widget':
+                    updateWidget(msg.id, msg.widgetState);
+                break;
+                case 'remove_widget':
+                    removeWidget(msg.id);
+                break;
                 case 'update':
                     elem = document.createElement('div');
                     elem.className = 'chat chat-update';
@@ -541,10 +564,11 @@
                     }, 5000);
                 break;
                 case 'error':
+                default:
                     if (msg.error === 'not_found') {
                         init404();
                     } else {
-                        $('homepage').innerHTML = 'Error communicating with server, lost connection:\n' + msg.error;
+                        $('homepage').innerHTML = 'Error communicating with server, lost connection:\n' + msg.error || ('Unknown packet type: ' + msg.type);
                     }
                     errored = true;
                 break;
@@ -571,6 +595,7 @@
             } else if (a > b) {
                 return 1;
             }
+
             return 0;
         });
         $('users-online').innerHTML = _.size(state.users) + '/' + state.viewers + ' viewers in chat:';
@@ -660,5 +685,182 @@
         } else {
             $('poll').className = 'unloaded';
         }
+    }
+
+    function initWidgets(widgets, widgetState) {
+        state.widgets = widgets;
+        state.widgetState = widgetState;
+        state.widgets.forEach(function (widget, i) {
+            state.widgetDOM.push(initWidget(i, widget, state.widgetState[i]));
+        });
+    }
+
+    function addWidget(widget, widgetState) {
+        state.widgets.push(widget);
+        state.widgetState.push(widgetState);
+        state.widgetDOM.push(initWidget(state.widgets.length - 1, widget, widgetState));
+    }
+
+    function updateWidget(id, widgetState) {
+        state.widgetState[id] = widgetState;
+        refreshWidget(id, state.widgets[id], state.widgetState[id], state.widgetDOM[id]);
+    }
+
+    function removeWidget(id) {
+        teardownWidget(id, state.widgets[id], state.widgetState[id], state.widgetDOM[id]);
+        state.widgets.splice(id, 1);
+        state.widgetState.splice(id, 1);
+        state.widgetDOM.splice(id, 1);
+    }
+
+    function initWidget(id, name, widgetState) {
+        var DOM = {};
+
+        DOM.container = document.createElement('div');
+        DOM.container.className = 'widget';
+
+        if (haveControl) {
+            DOM.remove = document.createElement('button');
+            DOM.remove.title = 'Remove widget';
+            DOM.remove.className = 'widget-remove';
+            DOM.remove.onclick = function () {
+                send({
+                    type: 'remove_widget',
+                    id: state.widgetDOM.indexOf(DOM)
+                });
+            };
+            DOM.removeImg = document.createElement('img');
+            DOM.removeImg.src = '/media/delete.png';
+            DOM.removeImg.alt = 'Remove widget';
+            DOM.remove.appendChild(DOM.removeImg);
+            appendText(DOM.remove, ' Remove widget');
+            DOM.container.appendChild(DOM.remove);
+        }
+
+        switch (name) {
+            case 'gg2Lobby':
+                DOM.teamSelector = document.createElement('select');
+                DOM.teamSelector.className = 'gg2lobby-team-selector unloaded';
+                DOM.teamSelector.onchange = function () {
+                    send({
+                        type: 'gg2lobby_change_team',
+                        id: state.widgetDOM.indexOf(DOM),
+                        team: DOM.teamSelector.value
+                    });
+                };
+                DOM.container.appendChild(DOM.teamSelector);
+
+                ['spectator', 'red', 'blue'].forEach(function (teamName, index) {
+                    var elem;
+
+                    DOM['teamSelectOption'] = elem = document.createElement('option');
+                    elem.value = teamName;
+                    appendText(elem, (index === 9 ? 'Q' : index) + ' - ' + teamName[0].toUpperCase() + teamName.slice(1));
+                    DOM.teamSelector.appendChild(elem);
+                });
+
+                DOM.classSelector = document.createElement('select');
+                DOM.classSelector.className = 'gg2lobby-class-selector unloaded';
+                DOM.classSelector.onchange = function () {
+                    send({
+                        type: 'gg2lobby_change_class',
+                        id: state.widgetDOM.indexOf(DOM),
+                        className: DOM.classSelector.value
+                    });
+                };
+                DOM.container.appendChild(DOM.classSelector);
+
+                ['runner', 'firebug', 'soldier', 'overweight', 'detonator', 'healer', 'constructor', 'infiltrator', 'rifleman', 'querly'].forEach(function (className, index) {
+                    var elem;
+
+                    DOM['classSelectOption'] = elem = document.createElement('option');
+                    elem.value = className;
+                    appendText(elem, (index === 9 ? 'Q' : index) + ' - ' + className[0].toUpperCase() + className.slice(1));
+                    DOM.classSelector.appendChild(elem);
+                });
+
+                DOM.spectator = document.createElement('div');
+                DOM.spectator.className = 'gg2lobby-team';
+                DOM.container.appendChild(DOM.spectator);
+
+                DOM.red = document.createElement('div');
+                DOM.red.className = 'gg2lobby-team gg2lobby-red';
+                DOM.container.appendChild(DOM.red);
+
+                DOM.blue = document.createElement('div');
+                DOM.blue.className = 'gg2lobby-team gg2lobby-blue';
+                DOM.container.appendChild(DOM.blue);
+
+                DOM.spectatorHeading = document.createElement('h2');
+                appendText(DOM.spectatorHeading, 'Spectator');
+                DOM.spectator.appendChild(DOM.spectatorHeading);
+
+                DOM.redHeading = document.createElement('h2');
+                appendText(DOM.redHeading, 'Red');
+                DOM.red.appendChild(DOM.redHeading);
+
+                DOM.blueHeading = document.createElement('h2');
+                appendText(DOM.blueHeading, 'Blue');
+                DOM.blue.appendChild(DOM.blueHeading);
+
+                DOM.spectatorList = document.createElement('ul');
+                DOM.spectator.appendChild(DOM.spectatorList);
+
+                DOM.redList = document.createElement('ul');
+                DOM.red.appendChild(DOM.redList);
+
+                DOM.blueList = document.createElement('ul');
+                DOM.blue.appendChild(DOM.blueList);
+
+                refreshWidget(id, name, widgetState, DOM);
+            break;
+        }
+
+        $('widgets-container').appendChild(DOM.container);
+
+        return DOM;
+    }
+
+    function refreshWidget(id, name, widgetState, DOM) {
+        var canEdit = false;
+
+        switch (name) {
+            case 'gg2Lobby':
+                DOM.redList.innerHTML = '';
+                DOM.blueList.innerHTML = '';
+                DOM.spectatorList.innerHTML = '';
+
+                widgetState.players.forEach(function (player) {
+                    var li;
+
+                    li = document.createElement('li');
+                    appendText(li, player.name + ' - ' + player.className);
+
+                    if (player.team === 'spectator') {
+                        DOM.spectatorList.appendChild(li);
+                    } else if (player.team === 'red') {
+                        DOM.redList.appendChild(li);
+                    } else {
+                        DOM.blueList.appendChild(li);
+                    }
+
+                    if (player.name === chatNick) {
+                        canEdit = true;
+                    }
+                });
+
+                if (canEdit) {
+                    DOM.teamSelector.className = 'gg2lobby-class-selector';
+                    DOM.classSelector.className = 'gg2lobby-class-selector';
+                } else {
+                    DOM.teamSelector.className = 'gg2lobby-class-selector unloaded';
+                    DOM.classSelector.className = 'gg2lobby-class-selector unloaded';
+                }
+            break;
+        }
+    }
+
+    function teardownWidget(id, name, widgetState, DOM) {
+        $('widgets-container').removeChild(DOM.container);
     }
 }());

@@ -47,6 +47,8 @@ function _Chatroom(obj) {
     this.secret = obj.secret;
     this.currentPoll = obj.currentPoll || null;
     this.mutedClients = obj.mutedClients || [];
+    this.widgets = obj.widgets || [];
+    this.widgetState = obj.widgetState || [];
 
     this.clients = [];
 };
@@ -58,7 +60,9 @@ _Chatroom.prototype.toJSON = function () {
         id: this.id,
         secret: this.secret,
         currentPoll: this.currentPoll,
-        mutedClients: this.mutedClients
+        mutedClients: this.mutedClients,
+        widgets: this.widgets,
+        widgetState: this.widgetState
     };
 };
 
@@ -79,6 +83,33 @@ _Chatroom.prototype.onJoinChat = function (client) {
             poll_vote: client.poll_vote
         });
     }
+
+    // handle widgets
+    this.widgets.forEach(function (widget, id) {
+        var widgetState = that.widgetState[id], existence;
+        switch (widget) {
+            case 'gg2Lobby':
+                if (_.filter(widgetState.players, function (player) {
+                    return player.name === client.chat_nick;
+                }).length === 0) {
+                    widgetState.players.push({
+                        name: client.chat_nick,
+                        team: 'spectator',
+                        className: 'runner'
+                    });
+                    // update each client
+                    that.clients.forEach(function (cl) {
+                        cl.send({
+                            type: 'update_widget',
+                            id: id,
+                            widgetState: widgetState
+                        });
+                    });
+                    saveChatrooms();
+                }
+            break;
+        }
+    });
 };
 
 // adds client to internal list
@@ -119,6 +150,35 @@ _Chatroom.prototype.removeClient = function (client) {
         });
     });
     console.log('now ' + this.usersViewing() + ' users viewing chatroom ' + this.id);
+
+    // handle widgets
+    this.widgets.forEach(function (widget, id) {
+        var widgetState = that.widgetState[id], remove = null, dirty = false;
+        switch (widget) {
+            case 'gg2Lobby':
+                widgetState.players.forEach(function (player, i) {
+                    if (player.name === client.chat_nick) {
+                        remove = i;
+                    }
+                });
+                dirty = (remove !== null);
+                if (remove !== null) {
+                    widgetState.players.splice(remove, 1);
+                }    
+            break;
+        }
+        if (dirty) {
+            // update each client
+            that.clients.forEach(function (cl) {
+                cl.send({
+                    type: 'update_widget',
+                    id: id,
+                    widgetState: widgetState
+                });
+            });
+            saveChatrooms();
+        }
+    });
 };
 
 // return number of users viewing chatroom
@@ -372,6 +432,137 @@ _Chatroom.prototype.changeTitle = function (title, nick) {
     });
 
     saveChatrooms();
+};
+
+// adds widget
+_Chatroom.prototype.addWidget = function (widget, nick) {
+    var state;
+
+    if (!_.contains(['gg2Lobby'], widget)) {
+        return false;
+    }
+
+    switch (widget) {
+        case 'gg2Lobby':
+            state = {
+                players: []
+            };
+
+            if (nick !== null) {
+                state.players.push({
+                    name: nick,
+                    team: 'spectator',
+                    className: 'runner'
+                });
+            }
+        break;
+    }
+
+    this.widgets.push(widget);
+    this.widgetState.push(state);
+
+    // update each client
+    this.clients.forEach(function (cl) {
+        cl.send({
+            type: 'add_widget',
+            widget: widget,
+            widgetState: state
+        });
+    });
+
+    saveChatrooms();
+};
+
+// removes widget
+_Chatroom.prototype.removeWidget = function (id) {
+    var state;
+
+    if (!this.widgets.hasOwnProperty(id)) {
+        return false;
+    }
+
+    this.widgets.splice(id, 1);
+    this.widgetState.splice(id, 1);
+
+    // update each client
+    this.clients.forEach(function (cl) {
+        cl.send({
+            type: 'remove_widget',
+            id: id
+        });
+    });
+
+    saveChatrooms();
+};
+
+// gg2Lobby widget: changes team
+_Chatroom.prototype.gg2LobbyChangeTeam = function (id, nick, team) {
+    var state, dirty = false;
+
+    if (!this.widgets.hasOwnProperty(id)) {
+        return false;
+    }
+
+    if (this.widgets[id] !== 'gg2Lobby') {
+        return false;
+    }
+
+    state = this.widgetState[id];
+
+    state.players.forEach(function (player) {
+        if (player.name === nick) {
+            player.team = team;
+            dirty = true;
+        }
+    });
+
+    if (dirty) {
+        // update each client
+        this.clients.forEach(function (cl) {
+            cl.send({
+                type: 'update_widget',
+                id: id,
+                widgetState: state
+            });
+        });
+
+        saveChatrooms();
+    }
+};
+
+// gg2Lobby widget: changes class
+_Chatroom.prototype.gg2LobbyChangeClass = function (id, nick, className) {
+    var state, dirty = false;
+
+    if (!this.widgets.hasOwnProperty(id)) {
+        return false;
+    }
+
+    if (this.widgets[id] !== 'gg2Lobby') {
+        return false;
+    }
+
+    state = this.widgetState[id];
+
+    state.players.forEach(function (player) {
+        if (player.name === nick) {
+            player.className = className;
+            dirty = true;
+        }
+    });
+
+    if (dirty) {
+        // update each client
+        this.clients.forEach(function (cl) {
+            cl.send({
+                type: 'update_widget',
+                id: id,
+                widgetState: state
+            });
+        });
+
+        saveChatrooms();
+    }
 };
 
 // public Chatroom constructor (new chatroom)

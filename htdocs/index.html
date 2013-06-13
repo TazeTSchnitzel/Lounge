@@ -2,7 +2,7 @@
 <meta charset=utf-8>
 <title>Lounge</title>
 <link rel=stylesheet href=/style.css>
-<link rel="shortcut icon" href=/media/logo.png>
+<link rel="shortcut icon" href=/favicon.ico>
 <link rel=icon href=/media/logo.png>
 
 <div id=site class=unloaded>
@@ -54,6 +54,15 @@
         </div>
     </div>
     <div id=viewer>
+        <div id=widgets>
+            <div id=widgets-controls class=unloaded>
+                <select id=widget-choice>
+                    <option value=gg2Lobby>GG2 Lobby</option>
+                </select>
+                <button id=add-widget title="Add widget"><img src=/media/add.png alt="Add widget"> Add widget</button>
+            </div>
+            <div id=widgets-container></div>
+        </div>
         <div id=chat>
             <div id=users-online></div>
             <div id=chatlog></div>

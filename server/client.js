@@ -478,6 +478,58 @@ function hookEvents (client) {
 
                 client.chatroom.changeTitle(msg.title, client.chat_nick);
             break;
+            case 'add_widget':
+                // check that they have control of chatroom
+                if (!client.control) {
+                    client.send({
+                        type: 'error',
+                        error: 'not_control'
+                    });
+                    client.conn.close();
+                    return;
+                }
+
+                client.chatroom.addWidget(msg.widget, client.chat_nick);
+            break;
+            case 'remove_widget':
+                // check that they have control of chatroom
+                if (!client.control) {
+                    client.send({
+                        type: 'error',
+                        error: 'not_control'
+                    });
+                    client.conn.close();
+                    return;
+                }
+
+                client.chatroom.removeWidget(msg.id);
+            break;
+            case 'gg2lobby_change_team':
+                // check that they are in chat
+                if (client.chat_nick === null) {
+                    client.send({
+                        type: 'error',
+                        error: 'not_in_chat'
+                    });
+                    client.conn.close();
+                    return;
+                }
+
+                client.chatroom.gg2LobbyChangeTeam(msg.id, client.chat_nick, msg.team);
+            break;
+            case 'gg2lobby_change_class':
+                // check that they are in chat
+                if (client.chat_nick === null) {
+                    client.send({
+                        type: 'error',
+                        error: 'not_in_chat'
+                    });
+                    client.conn.close();
+                    return;
+                }
+
+                client.chatroom.gg2LobbyChangeClass(msg.id, client.chat_nick, msg.className);
+            break;
             default:
                 client.send({
                     type: 'error',
@@ -518,7 +570,9 @@ function Client (conn, chatroom, secret) {
             title: chatroom.title,
             id: chatroom.id,
             poll: (chatroom.hasPoll() ? chatroom.getPoll() : null),
-            viewers: chatroom.clientsViewing()
+            viewers: chatroom.clientsViewing(),
+            widgets: chatroom.widgets,
+            widgetState: chatroom.widgetState
         },
         control: this.control
     });
