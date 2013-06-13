@@ -133,14 +133,14 @@ wsServer.on('request', function(request) {
 
 if (Config.useInternalServer) {
     var app = express();
-    var lounge_js = fs.readFileSync("../htdocs/lounge.js", {encoding: 'utf8'})
-        .replace("http://lounge.ajf.me", (Constants.DEBUG_MODE ? Config.debugOrigin : Config.origin));
-    var index_html = fs.readFileSync("../htdocs/index.html", {encoding: 'utf8'});
     app.use("/lounge.js", function(req,res) {
+        var lounge_js = fs.readFileSync("../htdocs/lounge.js", {encoding: 'utf8'})
+        .replace("http://lounge.ajf.me", (Constants.DEBUG_MODE ? Config.debugOrigin : Config.origin));
         res.send(lounge_js);
     });
     app.use("/", express.static("../htdocs"));
     app.use("/", function(req,res) {
+        var index_html = fs.readFileSync("../htdocs/index.html", {encoding: 'utf8'});
         // Static lookup failed
         res.send(index_html);
     });
