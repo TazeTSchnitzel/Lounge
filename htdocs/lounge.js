@@ -756,9 +756,10 @@
                 DOM.teamSelector.className = 'gg2lobby-team-selector';
                 DOM.teamSelector.onchange = function () {
                     send({
-                        type: 'gg2lobby_change_team',
+                        type: 'gg2lobby_set_player_property',
                         id: state.widgetDOM.indexOf(DOM),
-                        team: DOM.teamSelector.value
+                        name: 'team',
+                        value: DOM.teamSelector.value
                     });
                 };
                 DOM.controls.appendChild(DOM.teamSelector);
@@ -776,9 +777,10 @@
                 DOM.classSelector.className = 'gg2lobby-class-selector';
                 DOM.classSelector.onchange = function () {
                     send({
-                        type: 'gg2lobby_change_class',
+                        type: 'gg2lobby_set_player_property',
                         id: state.widgetDOM.indexOf(DOM),
-                        className: DOM.classSelector.value
+                        name: 'className',
+                        value: DOM.classSelector.value
                     });
                 };
                 DOM.controls.appendChild(DOM.classSelector);
@@ -798,9 +800,10 @@
                 DOM.ready.type = 'checkbox';
                 DOM.ready.onchange = function () {
                     send({
-                        type: 'gg2lobby_set_ready',
+                        type: 'gg2lobby_set_player_property',
                         id: state.widgetDOM.indexOf(DOM),
-                        ready: DOM.ready.checked
+                        name: 'ready',
+                        value: DOM.ready.checked
                     });
                 };
                 DOM.readyLabel.appendChild(DOM.ready);                

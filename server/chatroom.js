@@ -497,8 +497,8 @@ _Chatroom.prototype.removeWidget = function (id) {
     saveChatrooms();
 };
 
-// gg2Lobby widget: changes team
-_Chatroom.prototype.gg2LobbyChangeTeam = function (id, nick, team) {
+// gg2Lobby widget: sets player property
+_Chatroom.prototype.gg2LobbySetPlayerProperty = function (id, nick, name, value) {
     var state, dirty = false;
 
     if (!this.widgets.hasOwnProperty(id)) {
@@ -509,11 +509,15 @@ _Chatroom.prototype.gg2LobbyChangeTeam = function (id, nick, team) {
         return false;
     }
 
+    if (!_.contains(['team', 'className', 'ready'], name)) {
+        return false;
+    }
+
     state = this.widgetState[id];
 
     state.players.forEach(function (player) {
         if (player.name === nick) {
-            player.team = team;
+            player[name] = value;
             dirty = true;
         }
     });
@@ -531,77 +535,6 @@ _Chatroom.prototype.gg2LobbyChangeTeam = function (id, nick, team) {
         saveChatrooms();
     }
 };
-
-// gg2Lobby widget: changes class
-_Chatroom.prototype.gg2LobbyChangeClass = function (id, nick, className) {
-    var state, dirty = false;
-
-    if (!this.widgets.hasOwnProperty(id)) {
-        return false;
-    }
-
-    if (this.widgets[id] !== 'gg2Lobby') {
-        return false;
-    }
-
-    state = this.widgetState[id];
-
-    state.players.forEach(function (player) {
-        if (player.name === nick) {
-            player.className = className;
-            dirty = true;
-        }
-    });
-
-    if (dirty) {
-        // update each client
-        this.clients.forEach(function (cl) {
-            cl.send({
-                type: 'update_widget',
-                id: id,
-                widgetState: state
-            });
-        });
-
-        saveChatrooms();
-    }
-};
-
-// gg2Lobby widget: sets readiness
-_Chatroom.prototype.gg2LobbySetReady = function (id, nick, ready) {
-    var state, dirty = false;
-
-    if (!this.widgets.hasOwnProperty(id)) {
-        return false;
-    }
-
-    if (this.widgets[id] !== 'gg2Lobby') {
-        return false;
-    }
-
-    state = this.widgetState[id];
-
-    state.players.forEach(function (player) {
-        if (player.name === nick) {
-            player.ready = ready;
-            dirty = true;
-        }
-    });
-
-    if (dirty) {
-        // update each client
-        this.clients.forEach(function (cl) {
-            cl.send({
-                type: 'update_widget',
-                id: id,
-                widgetState: state
-            });
-        });
-
-        saveChatrooms();
-    }
-};
-
 
 // public Chatroom constructor (new chatroom)
 function Chatroom(title) {
