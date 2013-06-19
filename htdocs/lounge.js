@@ -839,11 +839,26 @@
                 DOM.teams.className = 'gg2lobby-teams';
                 DOM.container.appendChild(DOM.teams);
 
-                ['serverName', 'maps', 'password'].forEach(function (property) {
-                    var elem;
+                DOM.facts = document.createElement('ul');
+                DOM.facts.className = 'gg2lobby-facts';
+                DOM.teams.appendChild(DOM.facts);
 
-                    DOM[property] = elem = document.createElement('h2');
-                    DOM.teams.appendChild(elem);
+                ['serverName', 'maps', 'password'].forEach(function (property) {
+                    var li, title, value;
+
+                    DOM[property] = li = document.createElement('li');
+                    DOM[property + 'Title'] = title = document.createElement('span');
+                    title.className = 'gg2lobby-fact-title';
+                    title.innerHTML = {
+                        serverName: 'Server name',
+                        password: 'Server password',
+                        maps: 'Maps list'
+                    }[property];
+                    li.appendChild(title);
+                    DOM[property + 'Value'] = value = document.createElement('span');
+                    value.className = 'gg2lobby-fact-value';
+                    li.appendChild(value);
+                    DOM.facts.appendChild(li);
                 });
 
                 DOM.allReady = document.createElement('h2');
@@ -901,12 +916,8 @@
                 ['serverName', 'maps', 'password'].forEach(function (property) {
                     var elem;
 
-                    DOM[property].innerHTML = '';
-                    appendText(DOM[property], {
-                        serverName: 'Server name: ',
-                        password: 'Server password: ',
-                        maps: 'Maps list: '
-                    }[property] + (widgetState[property] || ''));
+                    DOM[property + 'Value'].innerHTML = '';
+                    appendText(DOM[property + 'Value'], (widgetState[property] || ''));
                     DOM[property + 'Box'].value = (widgetState[property] || '');
                 });
 
