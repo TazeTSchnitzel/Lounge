@@ -446,7 +446,10 @@ _Chatroom.prototype.addWidget = function (widget, nick) {
     switch (widget) {
         case 'gg2Lobby':
             state = {
-                players: []
+                players: [],
+                serverName: '',
+                maps: '',
+                password: ''
             };
 
             if (nick !== null) {

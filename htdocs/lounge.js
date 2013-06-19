@@ -906,8 +906,8 @@
                         serverName: 'Server name: ',
                         password: 'Server password: ',
                         maps: 'Maps list: '
-                    }[property] + widgetState[property]);
-                    DOM[property + 'Box'].value = widgetState[property];
+                    }[property] + (widgetState[property] || ''));
+                    DOM[property + 'Box'].value = (widgetState[property] || '');
                 });
 
                 DOM.redList.innerHTML = '';
