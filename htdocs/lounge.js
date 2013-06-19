@@ -272,6 +272,9 @@
                         // unhide widgets controls box
                         $('widgets-controls').className = '';
 
+                        // unhide control link
+                        $('control').className = '';
+
                         // display chatroom control URL
                         $('control-link').value = SITE_URL + '/' + chatroom.id + '#control=' + control;
 
