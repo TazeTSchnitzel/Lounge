@@ -748,9 +748,34 @@
 
         switch (name) {
             case 'gg2Lobby':
-                DOM.controls = document.createElement('div');
-                DOM.controls.className = 'gg2lobby-controls unloaded';
-                DOM.container.appendChild(DOM.controls);
+                DOM.widgetControls = document.createElement('div');
+                DOM.widgetControls.className = 'gg2lobby-controls unloaded';
+                DOM.container.appendChild(DOM.widgetControls);
+
+                ['serverName', 'maps', 'password'].forEach(function (property) {
+                    var elem;
+
+                    DOM[property + 'Box'] = elem = document.createElement('input');
+                    elem.type = 'text';
+                    elem.placeholder = {
+                        serverName: 'Server name',
+                        password: 'Server password',
+                        maps: 'Maps list'
+                    }[property];
+                    elem.onchange = function () {
+                        send({
+                            type: 'gg2lobby_set_widget_property',
+                            id: state.widgetDOM.indexOf(DOM),
+                            name: property,
+                            value: elem.value
+                        });
+                    };
+                    DOM.widgetControls.appendChild(elem);
+                });
+
+                DOM.playerControls = document.createElement('div');
+                DOM.playerControls.className = 'gg2lobby-controls unloaded';
+                DOM.container.appendChild(DOM.playerControls);
 
                 DOM.teamSelector = document.createElement('select');
                 DOM.teamSelector.className = 'gg2lobby-team-selector';
@@ -762,7 +787,7 @@
                         value: DOM.teamSelector.value
                     });
                 };
-                DOM.controls.appendChild(DOM.teamSelector);
+                DOM.playerControls.appendChild(DOM.teamSelector);
 
                 ['spectator', 'red', 'blue'].forEach(function (teamName, index) {
                     var elem;
@@ -783,7 +808,7 @@
                         value: DOM.classSelector.value
                     });
                 };
-                DOM.controls.appendChild(DOM.classSelector);
+                DOM.playerControls.appendChild(DOM.classSelector);
 
                 ['runner', 'firebug', 'rocketman', 'overweight', 'detonator', 'healer', 'constructor', 'infiltrator', 'rifleman', 'querly'].forEach(function (className, index) {
                     var elem;
@@ -808,11 +833,23 @@
                 };
                 DOM.readyLabel.appendChild(DOM.ready);                
                 appendText(DOM.readyLabel, ' Ready');
-                DOM.controls.appendChild(DOM.readyLabel);
+                DOM.playerControls.appendChild(DOM.readyLabel);
 
                 DOM.teams = document.createElement('div');
                 DOM.teams.className = 'gg2lobby-teams';
                 DOM.container.appendChild(DOM.teams);
+
+                ['serverName', 'maps', 'password'].forEach(function (property) {
+                    var elem;
+
+                    DOM[property] = elem = document.createElement('h2');
+                    DOM.teams.appendChild(elem);
+                });
+
+                DOM.allReady = document.createElement('h2');
+                DOM.allReady.className = 'gg2lobby-all-ready unloaded';
+                DOM.allReady.innerHTML = 'All Ready!';
+                DOM.teams.appendChild(DOM.allReady);
 
                 DOM.spectator = document.createElement('div');
                 DOM.spectator.className = 'gg2lobby-team';
@@ -857,14 +894,27 @@
     }
 
     function refreshWidget(id, name, widgetState, DOM) {
-        var canEdit = false;
+        var canEdit = false, numReady;
 
         switch (name) {
             case 'gg2Lobby':
+                ['serverName', 'maps', 'password'].forEach(function (property) {
+                    var elem;
+
+                    DOM[property].innerHTML = '';
+                    appendText(DOM[property], {
+                        serverName: 'Server name: ',
+                        password: 'Server password: ',
+                        maps: 'Maps list: '
+                    }[property] + widgetState[property]);
+                    DOM[property + 'Box'].value = widgetState[property];
+                });
+
                 DOM.redList.innerHTML = '';
                 DOM.blueList.innerHTML = '';
                 DOM.spectatorList.innerHTML = '';
 
+                numReady = 0;
                 widgetState.players.forEach(function (player) {
                     var li, img, input;
 
@@ -885,6 +935,10 @@
                     input.checked = player.ready;
                     li.appendChild(input);
 
+                    if (player.ready) {
+                        numReady++;
+                    }
+
                     if (player.team === 'spectator') {
                         DOM.spectatorList.appendChild(li);
                     } else if (player.team === 'red') {
@@ -901,10 +955,20 @@
                     }
                 });
 
-                if (canEdit) {
-                    DOM.controls.className = 'gg2lobby-controls';
+                if (numReady === widgetState.players.length && widgetState.players.length > 0) {
+                    DOM.allReady.className = 'gg2lobby-all-ready';
                 } else {
-                    DOM.controls.className = 'gg2lobby-controls unloaded';
+                    DOM.allReady.className = 'gg2lobby-all-ready unloaded';
+                }
+
+                if (canEdit) {
+                    DOM.playerControls.className = 'gg2lobby-controls';
+                } else {
+                    DOM.playerControls.className = 'gg2lobby-controls unloaded';
+                }
+
+                if (haveControl) {
+                    DOM.widgetControls.className = 'gg2lobby-controls';
                 }
             break;
         }

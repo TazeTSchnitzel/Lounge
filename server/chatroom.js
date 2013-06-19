@@ -536,6 +536,37 @@ _Chatroom.prototype.gg2LobbySetPlayerProperty = function (id, nick, name, value)
     }
 };
 
+// gg2Lobby widget: sets widget property
+_Chatroom.prototype.gg2LobbySetWidgetProperty = function (id, nick, name, value) {
+    var state, dirty = false;
+
+    if (!this.widgets.hasOwnProperty(id)) {
+        return false;
+    }
+
+    if (this.widgets[id] !== 'gg2Lobby') {
+        return false;
+    }
+
+    if (!_.contains(['maps', 'serverName', 'password'], name)) {
+        return false;
+    }
+
+    state = this.widgetState[id];
+    state[name] = value;
+
+    // update each client
+    this.clients.forEach(function (cl) {
+        cl.send({
+            type: 'update_widget',
+            id: id,
+            widgetState: state
+        });
+    });
+
+    saveChatrooms();
+};
+
 // public Chatroom constructor (new chatroom)
 function Chatroom(title) {
     var id, secret, s;

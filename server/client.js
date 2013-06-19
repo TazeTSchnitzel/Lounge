@@ -517,6 +517,19 @@ function hookEvents (client) {
 
                 client.chatroom.gg2LobbySetPlayerProperty(msg.id, client.chat_nick, msg.name, msg.value);
             break;
+            case 'gg2lobby_set_widget_property':
+                // check that they are in chat
+                if (client.chat_nick === null) {
+                    client.send({
+                        type: 'error',
+                        error: 'not_in_chat'
+                    });
+                    client.conn.close();
+                    return;
+                }
+
+                client.chatroom.gg2LobbySetWidgetProperty(msg.id, client.chat_nick, msg.name, msg.value);
+            break;
             default:
                 client.send({
                     type: 'error',
