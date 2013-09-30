@@ -1,7 +1,6 @@
 var underscore = require('underscore');
 
-var Accounts = require('./accounts.js'),
-    Chatroom = require('./chatroom.js');
+var Chatroom = require('./chatroom.js');
 
 // internal variables and functions
 var clients = [];
@@ -250,69 +249,6 @@ function hookEvents (client) {
                     client.conn.close();
                 }
             break;
-            case 'assert':
-                Accounts.personaAssert(msg.assertion, function (res, email) {
-                    var i, account;
-
-                    if (!res) {
-                        client.send({
-                            type: 'error',
-                            error: 'bad_persona_assertion'
-                        });
-                        client.conn.close();
-                    } else {
-                        client.email = email;
-                        if (Accounts.haveEmail(email)) {
-                            account = Accounts.getByEmail(email);
-
-                            // check if nick is taken
-                            for (i = 0; i < clients.length; i++) {
-                                if (clients[i].chatroom === client.chatroom && clients[i].chat_nick === account.nick) {
-                                    client.send({
-                                        type: 'nick_in_use',
-                                        nick: account.nick
-                                    });
-                                    return;
-                                }
-                            }
-
-                            client.chat_nick = account.nick;
-                            client.muted = !client.control && client.chatroom.isClientMuted(client.chat_nick);
-                            client.prefix = (client.control ? '@' : client.chatroom.isClientMuted(client.chat_nick) ? '~' : '');
-
-                            client.send({
-                                type: 'nick_chosen',
-                                nick: client.chat_nick,
-                                prefix: client.prefix
-                            });
-
-                            // tell the chatroom
-                            client.chatroom.onJoinChat(client);
-
-                            // inform if muted
-                            if (client.muted) {
-                                client.send({
-                                    type: 'chat_info',
-                                    msg: 'You are currently muted and cannot send messages.'
-                                });
-                            }
-
-                            // update each client
-                            client.chatroom.forEachClient(function (cl) {
-                                cl.send({
-                                    type: 'join',
-                                    prefix: client.prefix,
-                                    nick: client.chat_nick
-                                });
-                            });
-                        } else {
-                            client.send({
-                                type: 'choose_nick'
-                            });
-                        }
-                    }
-                });
-            break;
             case 'set_nick':
                 if (!msg.nick.match(/^[a-zA-Z0-9_]{3,18}$/g)) {
                     client.send({
@@ -322,30 +258,16 @@ function hookEvents (client) {
                     client.conn.close();
                     return;
                 }
-                if (client.email === null) {
-                    client.send({
-                        type: 'error',
-                        error: 'not_logged_in'
-                    });
-                    client.conn.close();
-                    return;
+                // check if nick is taken
+                for (i = 0; i < clients.length; i++) {
+                    if (clients[i].chatroom === client.chatroom && clients[i].chat_nick === msg.nick) {
+                        client.send({
+                            type: 'nick_in_use',
+                            nick: msg.nick
+                        });
+                        return;
+                    }
                 }
-                if (Accounts.haveEmail(client.email)) {
-                    client.send({
-                        type: 'error',
-                        error: 'already_have_nick_for_email'
-                    });
-                    client.conn.close();
-                    return;
-                }
-                if (Accounts.haveNick(msg.nick)) {
-                    client.send({
-                        type: 'choose_nick',
-                        reason: 'nick_taken'
-                    });
-                    return;
-                }
-                Accounts.add(client.email, msg.nick);
                 client.chat_nick = msg.nick;
                 client.muted = !client.control && client.chatroom.isClientMuted(client.chat_nick);
                 client.prefix = (client.control ? '@' : client.chatroom.isClientMuted(client.chat_nick) ? '~' : '');
@@ -557,7 +479,6 @@ function Client (conn, chatroom, secret) {
     this.chatroom = chatroom;
     this.control = chatroom.secret === secret;
     this.chat_nick = null;
-    this.email = null;
     this.poll_vote = null;
     this.prefix = '';
     this.muted = false;

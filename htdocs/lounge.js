@@ -293,7 +293,12 @@
                     // make chat work
                     $('login-btn').disabled = false;
                     $('login-btn').onclick = function () {
-                        navigator.id.request();
+                        send({
+                            type: 'set_nick',
+                            nick: $('chatbox').value
+                        });
+                        $('chatbox').disabled = true;
+                        $('chatbox').value = '';
                     };
                     $('chatbox').placeholder = 'choose a nick (press enter)';
                     $('chatbox').onkeypress = function (e) {
@@ -317,22 +322,6 @@
                             return false;
                         }
                     };
-                    navigator.id.watch({
-                        loggedInUser: null,
-                        onlogin: function (assertion) {
-                            if (chatNick === null) {
-                                send({
-                                    type: 'assert',
-                                    assertion: assertion
-                                });
-                                $('login-btn').disabled = true;
-                                $('login-btn').innerHTML = 'logging in...';
-                            }
-                        },
-                        onlogout: function () {
-                            window.location.reload();
-                        }
-                    });
                     window.onresize = scrollChatlog;
                     if (document.hasOwnProperty('hidden')) {
                         document.addEventListener('visibilitychange', onChangeVisibility);
@@ -517,7 +506,7 @@
                     $('chatbox').className = '';
                     $('logout-btn').className = '';
                     $('logout-btn').onclick = function () {
-                        navigator.id.logout();
+                        window.location.reload();
                     };
                     $('chat-btn').className = '';
                     $('chat-btn').onclick = function () {
@@ -981,8 +970,10 @@
                     DOM.playerControls.className = 'gg2lobby-controls unloaded';
                 }
 
-                if (haveControl) {
+                if (haveControl && canEdit) {
                     DOM.widgetControls.className = 'gg2lobby-controls';
+                } else {
+                    DOM.widgetControls.className = 'gg2lobby-controls unloaded';
                 }
             break;
         }
