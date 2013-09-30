@@ -178,7 +178,7 @@ function greet (client) {
         });
         client.send({
             type: 'chat_info',
-            msg: '/poll title,option,option,... (e.g. /poll Best Pony?,Rainbow Dash,Fluttershy,Rarity) - runs a poll'
+            msg: '/poll title,option,option,... (e.g. /poll Best team?,Red,Blue,Spectator) - runs a poll'
         });
         client.send({
             type: 'chat_info',
