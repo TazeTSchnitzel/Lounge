@@ -240,13 +240,22 @@ header button, header input {
     overflow: hidden;
 }
 
-.gg2lobby-team {
-    width: 33%;
+.gg2lobby-red, .gg2lobby-blue {
+    width: 49%;
     float: left;
+}
+
+.gg2lobby-spectator {
+    clear: both;
 }
 
 .gg2lobby-team h2 {
     margin: 0;
+}
+
+.gg2lobby-spectator h2 {
+    font-size: 10pt;
+    display: inline-block;
 }
 
 .gg2lobby-team ul {
@@ -255,6 +264,14 @@ header button, header input {
 
 .gg2lobby-team li {
     list-style-type: none;
+}
+
+.gg2lobby-spectator ul {
+    display: inline;
+}
+
+.gg2lobby-spectator li {
+    display: inline-block;
 }
 
 .gg2lobby-red {

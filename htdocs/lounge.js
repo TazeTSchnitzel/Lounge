@@ -859,10 +859,6 @@
                 DOM.allReady.innerHTML = 'All Ready!';
                 DOM.teams.appendChild(DOM.allReady);
 
-                DOM.spectator = document.createElement('div');
-                DOM.spectator.className = 'gg2lobby-team';
-                DOM.teams.appendChild(DOM.spectator);
-
                 DOM.red = document.createElement('div');
                 DOM.red.className = 'gg2lobby-team gg2lobby-red';
                 DOM.teams.appendChild(DOM.red);
@@ -870,10 +866,6 @@
                 DOM.blue = document.createElement('div');
                 DOM.blue.className = 'gg2lobby-team gg2lobby-blue';
                 DOM.teams.appendChild(DOM.blue);
-
-                DOM.spectatorHeading = document.createElement('h2');
-                appendText(DOM.spectatorHeading, 'Spectator');
-                DOM.spectator.appendChild(DOM.spectatorHeading);
 
                 DOM.redHeading = document.createElement('h2');
                 appendText(DOM.redHeading, 'Red');
@@ -883,14 +875,22 @@
                 appendText(DOM.blueHeading, 'Blue');
                 DOM.blue.appendChild(DOM.blueHeading);
 
-                DOM.spectatorList = document.createElement('ul');
-                DOM.spectator.appendChild(DOM.spectatorList);
-
                 DOM.redList = document.createElement('ul');
                 DOM.red.appendChild(DOM.redList);
 
                 DOM.blueList = document.createElement('ul');
                 DOM.blue.appendChild(DOM.blueList);
+
+                DOM.spectator = document.createElement('div');
+                DOM.spectator.className = 'gg2lobby-team gg2lobby-spectator';
+                DOM.teams.appendChild(DOM.spectator);
+
+                DOM.spectatorHeading = document.createElement('h2');
+                appendText(DOM.spectatorHeading, 'Spectators: ');
+                DOM.spectator.appendChild(DOM.spectatorHeading);
+
+                DOM.spectatorList = document.createElement('ul');
+                DOM.spectator.appendChild(DOM.spectatorList);
 
                 refreshWidget(id, name, widgetState, DOM);
             break;
