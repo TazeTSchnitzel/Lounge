@@ -740,31 +740,6 @@
 
         switch (name) {
             case 'gg2Lobby':
-                DOM.widgetControls = document.createElement('div');
-                DOM.widgetControls.className = 'gg2lobby-controls unloaded';
-                DOM.container.appendChild(DOM.widgetControls);
-
-                ['serverName', 'maps', 'password'].forEach(function (property) {
-                    var elem;
-
-                    DOM[property + 'Box'] = elem = document.createElement('input');
-                    elem.type = 'text';
-                    elem.placeholder = {
-                        serverName: 'Server name',
-                        password: 'Server password',
-                        maps: 'Maps list'
-                    }[property];
-                    elem.onchange = function () {
-                        send({
-                            type: 'gg2lobby_set_widget_property',
-                            id: state.widgetDOM.indexOf(DOM),
-                            name: property,
-                            value: elem.value
-                        });
-                    };
-                    DOM.widgetControls.appendChild(elem);
-                });
-
                 DOM.playerControls = document.createElement('div');
                 DOM.playerControls.className = 'gg2lobby-controls unloaded';
                 DOM.container.appendChild(DOM.playerControls);
@@ -836,7 +811,7 @@
                 DOM.teams.appendChild(DOM.facts);
 
                 ['serverName', 'maps', 'password'].forEach(function (property) {
-                    var li, title, value;
+                    var li, title, value, valueEdit;
 
                     DOM[property] = li = document.createElement('li');
                     DOM[property + 'Title'] = title = document.createElement('span');
@@ -847,9 +822,35 @@
                         maps: 'Maps list'
                     }[property];
                     li.appendChild(title);
+
                     DOM[property + 'Value'] = value = document.createElement('span');
                     value.className = 'gg2lobby-fact-value';
                     li.appendChild(value);
+
+                    DOM[property + 'ValueEdit'] = valueEdit = document.createElement('input');
+                    valueEdit.type = 'text';
+                    valueEdit.className = 'gg2lobby-fact-value unloaded';
+                    valueEdit.onblur = function () {
+                        send({
+                            type: 'gg2lobby_set_widget_property',
+                            id: state.widgetDOM.indexOf(DOM),
+                            name: property,
+                            value: valueEdit.value
+                        });
+                        value.className = 'gg2lobby-fact-value';
+                        valueEdit.className = 'gg2lobby-fact-value unloaded';
+                    };
+                    li.appendChild(valueEdit);
+
+                    if (haveControl) {
+                        title.onclick = value.onclick = function () {
+                            if (chatNick === null)
+                                return;
+                            value.className = 'gg2lobby-fact-value unloaded';
+                            valueEdit.className = 'gg2lobby-fact-value';
+                            valueEdit.focus();
+                        };
+                    }
                     DOM.facts.appendChild(li);
                 });
 
@@ -910,7 +911,7 @@
 
                     DOM[property + 'Value'].innerHTML = '';
                     appendText(DOM[property + 'Value'], (widgetState[property] || ''));
-                    DOM[property + 'Box'].value = (widgetState[property] || '');
+                    DOM[property + 'ValueEdit'].value = (widgetState[property] || '');
                 });
 
                 DOM.redList.innerHTML = '';
@@ -970,10 +971,10 @@
                     DOM.playerControls.className = 'gg2lobby-controls unloaded';
                 }
 
-                if (haveControl && canEdit) {
-                    DOM.widgetControls.className = 'gg2lobby-controls';
+                if (canEdit && haveControl) {
+                    DOM.facts.className = 'gg2lobby-facts gg2lobby-editable';
                 } else {
-                    DOM.widgetControls.className = 'gg2lobby-controls unloaded';
+                    DOM.facts.className = 'gg2lobby-facts';
                 }
             break;
         }

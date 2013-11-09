@@ -276,3 +276,7 @@ header button, header input {
     min-width: 150px;
     font-weight: bold;
 }
+
+.gg2lobby-editable .gg2lobby-fact-title:hover, .gg2lobby-editable span.gg2lobby-fact-value:hover {
+    cursor: pointer;
+}
