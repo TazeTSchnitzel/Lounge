@@ -840,6 +840,12 @@
                         value.className = 'gg2lobby-fact-value';
                         valueEdit.className = 'gg2lobby-fact-value unloaded';
                     };
+                    valueEdit.onkeydown = function (e) {
+                        // Enter
+                        if (e.which === 13) {
+                            valueEdit.onblur();
+                        }
+                    };
                     li.appendChild(valueEdit);
 
                     if (haveControl) {
