@@ -296,4 +296,9 @@ header button, header input {
 
 .gg2lobby-editable .gg2lobby-fact-title:hover, .gg2lobby-editable span.gg2lobby-fact-value:hover {
     cursor: pointer;
+    text-decoration: underline;
+}
+
+.gg2lobby-editable.gg2lobby-facts li:hover {
+    list-style-image: url(media/pencil-bullet.png);
 }
