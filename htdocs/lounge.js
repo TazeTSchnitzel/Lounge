@@ -141,7 +141,6 @@
 
     function onChangeVisibility() {
         inFocus = !(document.hidden || document.webkitHidden || document.mozHidden || document.msHidden);
-        console.log(inFocus);
         if (unreadMessages && inFocus) {
             document.title = state.title + ' - Lounge';
             unreadMessages = 0;
